@@ -45,15 +45,34 @@ server.listen(PORT, () => {
 });
 
 io.on("connection", (socket) => {
-  console.log(`New client connected: ${socket.id}`);
+  console.log("New client connected");
 
-  socket.on("sendMessage", (messageData) => {
-    console.log("Message received: ", messageData);
+  Message.find()
+    .sort({ timestamp: -1 })
+    .limit(50)
+    .then((messages) => {
+      socket.emit("loadMessages", messages);
+    })
+    .catch((err) => console.error("Error loading messages:", err));
 
-    io.emit("message", messageData);
+  socket.on("sendMessage", async (messageData) => {
+    try {
+      const message = new Message({
+        text: messageData.text,
+        user: messageData.user,
+        timestamp: Date.now(),
+      });
+
+      const savedMessage = await message.save();
+
+      io.emit("message", savedMessage);
+    } catch (err) {
+      console.error("Error saving message:", err);
+      socket.emit("error", { message: "Error saving message" });
+    }
   });
 
   socket.on("disconnect", () => {
-    console.log(`Client disconnected: ${socket.id}`);
+    console.log("Client disconnected");
   });
 });
