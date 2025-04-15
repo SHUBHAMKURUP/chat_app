@@ -41,13 +41,17 @@ chat_app/
 
 ### Backend Setup
 
+# Install backend dependencies
+
 ```bash
 cd server
 npm install
+
+# Configure .env file
 cp .env.example .env
 PORT=5000
 MONGODB_URI=your_mongodb_connection_string
-npm start
+node index.js
 ```
 
 ### Frontend Setup
