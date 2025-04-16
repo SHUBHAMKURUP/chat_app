@@ -1,8 +1,8 @@
 const express = require("express");
 const http = require("http");
 const socketIO = require("socket.io");
-const cors = require("cors");
 const mongoose = require("mongoose");
+const cors = require("cors");
 require("dotenv").config();
 
 const messageSchema = new mongoose.Schema({
@@ -22,11 +22,9 @@ mongoose
   .catch((err) => console.log("MongoDB Connection Error:", err));
 
 const app = express();
-
 app.use(cors());
 
 const server = http.createServer(app);
-
 const io = socketIO(server, {
   cors: {
     origin: "*",
@@ -35,6 +33,9 @@ const io = socketIO(server, {
 });
 
 const PORT = process.env.PORT || 5000;
+
+// Global array to maintain connected users
+let connectedUsers = [];
 
 app.get("/", (req, res) => {
   res.send("Server is running!");
@@ -46,6 +47,20 @@ server.listen(PORT, () => {
 
 io.on("connection", (socket) => {
   console.log("New client connected");
+
+  // Extract username from query parameters or an initial message
+  // For demonstration, we expect the client to emit a "joinChat" event with a username.
+  socket.on("joinChat", ({ username }) => {
+    // Add user to global list along with socket id
+    const user = { id: socket.id, username };
+    connectedUsers.push(user);
+    console.log(`${username} joined the chat`);
+
+    // Emit that a new user has joined (to the current socket or broadcast)
+    io.emit("userJoined", user);
+    // Update the entire user list for everyone
+    io.emit("updateUserList", connectedUsers);
+  });
 
   Message.find()
     .sort({ timestamp: -1 })
@@ -64,7 +79,6 @@ io.on("connection", (socket) => {
       });
 
       const savedMessage = await message.save();
-
       io.emit("message", savedMessage);
     } catch (err) {
       console.error("Error saving message:", err);
@@ -72,7 +86,14 @@ io.on("connection", (socket) => {
     }
   });
 
+  // Handle user disconnect
   socket.on("disconnect", () => {
+    // Remove the disconnected user from the global list
+    connectedUsers = connectedUsers.filter((user) => user.id !== socket.id);
     console.log("Client disconnected");
+    // Broadcast updated user list
+    io.emit("updateUserList", connectedUsers);
+    // Optionally, you could also emit a "userLeft" event if needed:
+    io.emit("userLeft", socket.id);
   });
 });
