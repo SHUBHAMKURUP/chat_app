@@ -4,11 +4,18 @@ import { Server as socketIO } from "socket.io";
 import mongoose from "mongoose";
 import cors from "cors";
 import dotenv from "dotenv";
+
 dotenv.config();
 import authRoutes from "./routes/auth.route.js";
+import { connectDB } from "./lib/db.js";
 
+// Initialize express once
+const app = express();
+
+app.use(cors());
 app.use("/api/auth", authRoutes);
 
+// Message Schema
 const messageSchema = new mongoose.Schema({
   text: String,
   user: String,
@@ -17,37 +24,25 @@ const messageSchema = new mongoose.Schema({
 
 const Message = mongoose.model("Message", messageSchema);
 
-mongoose
-  .connect(process.env.MONGODB_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
-  .then(() => console.log("MongoDB Connected"))
-  .catch((err) => console.log("MongoDB Connection Error:", err));
-
-const app = express();
-app.use(cors());
-
+// Server Setup
 const server = http.createServer(app);
-const io = socketIO(server, {
+const io = new socketIO(server, {
   cors: {
-    origin: "*",
+    origin: "http://localhost:3000",
     methods: ["GET", "POST"],
+    credentials: true,
   },
 });
 
 const PORT = process.env.PORT || 5000;
-
 let connectedUsers = [];
 
+// Routes
 app.get("/", (req, res) => {
   res.send("Server is running!");
 });
 
-server.listen(PORT, () => {
-  console.log(`Server listening on port ${PORT}`);
-});
-
+// Socket.io Code
 io.on("connection", (socket) => {
   console.log("New client connected");
 
@@ -93,4 +88,9 @@ io.on("connection", (socket) => {
 
     io.emit("userLeft", socket.id);
   });
+});
+
+server.listen(PORT, () => {
+  console.log(`Server listening on port ${PORT}`);
+  connectDB();
 });
