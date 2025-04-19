@@ -14,6 +14,7 @@ const app = express();
 
 app.use(cors());
 app.use("/api/auth", authRoutes);
+app.use(express.json());
 
 // Message Schema
 const messageSchema = new mongoose.Schema({
@@ -28,7 +29,7 @@ const Message = mongoose.model("Message", messageSchema);
 const server = http.createServer(app);
 const io = new socketIO(server, {
   cors: {
-    origin: "http://localhost:3000",
+    origin: "*",
     methods: ["GET", "POST"],
     credentials: true,
   },
