@@ -1,8 +1,14 @@
 import { generateToken } from "../lib/utils.js";
+import User from "../models/user.model.js";
+import bcrypt from "bcryptjs";
+import { mongoose } from "../lib/db.js";
 
 export const signup = async (req, res) => {
   const { email, username, password } = req.body;
   try {
+    console.log("Registered models:", mongoose.modelNames());
+    console.log("User model exists:", !!mongoose.models.User);
+    console.log("Received request body:", req.body);
     if (!username || !email || !password) {
       return res.status(400).json({ message: "All fields are required" });
     }
@@ -14,7 +20,7 @@ export const signup = async (req, res) => {
 
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return res.status(400).json({ message: "User already exists" });
+      return res.status(400).json({ message: "Email already exists" });
     }
 
     const salt = await bcrypt.genSalt(10);
@@ -29,7 +35,8 @@ export const signup = async (req, res) => {
     if (newUser) {
       generateToken(newUser._id, res);
       await newUser.save();
-      return res.status(201).json({
+
+      res.status(201).json({
         _id: newUser._id,
         email: newUser.email,
         username: newUser.username,
@@ -80,3 +87,5 @@ export const logout = (req, res) => {
     return res.status(500).json({ message: "Internal server error" });
   }
 };
+
+export const updateProfile = async (req, res) => {};
