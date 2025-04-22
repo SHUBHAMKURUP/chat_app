@@ -1,63 +1,12 @@
-# Real-time Chat Application
+# React + Vite
 
-## Demo
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-[]
+Currently, two official plugins are available:
 
-## Overview
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
 
-A real-time chat application built using MERN stack (MongoDB, Express, React, Node.js) with Socket.IO for real-time communication.
+## Expanding the ESLint configuration
 
-## Tech Stack
-
-- Frontend: React
-- Backend: Node.js, Express
-- Database: MongoDB Atlas
-- Real-time: Socket.IO
-
-## Features
-
-- Real-time messaging
-- Message history
-- Timestamps
-- User identification
-- MongoDB persistence
-
-## Project Structure
-
-```
-chat_app/
-├── client/          # React frontend
-│   ├── src/
-│   ├── public/
-│   └── package.json
-└── server/          # Node.js backend
-    ├── index.js
-    ├── .env
-    └── package.json
-```
-
-## Setup Instructions
-
-### Backend Setup
-
-# Install backend dependencies
-
-```bash
-cd server
-npm install
-
-# Configure .env file
-cp .env.example .env
-PORT=5000
-MONGODB_URI=your_mongodb_connection_string
-node index.js
-```
-
-### Frontend Setup
-
-```bash
-cd client
-npm install
-npm start
-```
+If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
