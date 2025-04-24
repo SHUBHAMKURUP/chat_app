@@ -19,7 +19,5 @@ export const useAuthStore = create((set) => ({
     }
   },
 
-  signup: async({ email, password, name }) => {
-
-  }
-));
+  signup: async (data) => {},
+}));
