@@ -1,7 +1,6 @@
 import { create } from "zustand";
 import { axiosInstance } from "../lib/axios.js";
 import toast from "react-hot-toast";
-import { data } from "react-router-dom";
 
 export const useAuthStore = create((set) => ({
   authUser: null,
@@ -13,8 +12,13 @@ export const useAuthStore = create((set) => ({
   checkAuth: async () => {
     try {
       const res = await axiosInstance.get("/auth/check");
-      set({ authUser: res.data });
-    } catch {
+      if (res.data) {
+        set({ authUser: res.data });
+      } else {
+        set({ authUser: null });
+      }
+    } catch (error) {
+      console.error("Error checking auth:", error);
       set({ authUser: null });
     } finally {
       set({ isCheckingAuth: false });
@@ -56,4 +60,6 @@ export const useAuthStore = create((set) => ({
       toast.error(error.response.data.message);
     }
   },
+
+  updateProfile: async (data) => {},
 }));
