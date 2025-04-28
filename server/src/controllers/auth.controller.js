@@ -2,7 +2,7 @@ import { generateToken } from "../lib/utils.js";
 import User from "../models/user.model.js";
 import bcrypt from "bcryptjs";
 import { mongoose } from "../lib/db.js";
-import cloudinary from "cloudinary";
+import cloudinary from "../lib/cloudinary.js";
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -98,6 +98,9 @@ export const logout = (req, res) => {
 export const updateProfile = async (req, res) => {
   try {
     const { profilePic } = req.body;
+    if (!req.user || !req.user._id) {
+      return res.status(401).json({ message: "Unauthorized: User not found" });
+    }
     const userId = req.user._id;
 
     if (!profilePic) {
