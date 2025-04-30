@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { axiosInstance } from "../lib/axios.js";
 import toast from "react-hot-toast";
 
-export const useChatStore = create((set) => ({
+export const useChatStore = create((set, get) => ({
   messages: [],
   users: [],
   selectedUser: null,
@@ -15,7 +15,11 @@ export const useChatStore = create((set) => ({
       const res = await axiosInstance.get("/messages/users");
       set({ users: res.data });
     } catch (err) {
-      toast.error(err.response.data.message);
+      const message =
+        err?.response?.data?.message ||
+        err?.message ||
+        "An error occurred while fetching users.";
+      toast.error(message);
     } finally {
       set({ isUsersLoading: false });
     }
@@ -33,5 +37,22 @@ export const useChatStore = create((set) => ({
     }
   },
 
-  getSelectedUser: (selectedUser) => set({ selectedUser }),
+  sendMessage: async (messageData) => {
+    const { selectedUser, messages } = get();
+    try {
+      const res = await axiosInstance.post(
+        `/messages/send/${selectedUser._id}`,
+        messageData
+      );
+      set({ messages: [...messages, res.data] });
+    } catch (err) {
+      const message =
+        err?.response?.data?.message ||
+        err?.message ||
+        "An error occurred while sending the message.";
+      toast.error(message);
+    }
+  },
+
+  setSelectedUser: (selectedUser) => set({ selectedUser }),
 }));
