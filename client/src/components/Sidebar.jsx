@@ -40,7 +40,7 @@ const Sidebar = () => {
             <span className="text-sm">Show online only</span>
           </label>
           <span className="text-xs text-zinc-500">
-            ({onlineUsers.length - 1} online)
+            ({Array.isArray(onlineUsers) ? onlineUsers.length - 1 : 0} online)
           </span>
         </div>
       </div>
@@ -63,7 +63,7 @@ const Sidebar = () => {
             <div className="relative mx-auto lg:mx-0">
               <img
                 src={user.profilePic || "/avatar.png"}
-                alt={user.name}
+                alt={user.username}
                 className="size-12 object-cover rounded-full"
               />
               {onlineUsers.includes(user._id) && (
@@ -76,9 +76,11 @@ const Sidebar = () => {
 
             {/* User info - only visible on larger screens */}
             <div className="hidden lg:block text-left min-w-0">
-              <div className="font-medium truncate">{user.fullName}</div>
+              <div className="font-medium truncate">{user.username}</div>
               <div className="text-sm text-zinc-400">
-                {onlineUsers.includes(user._id) ? "Online" : "Offline"}
+                {Array.isArray(onlineUsers) && onlineUsers.includes(user._id)
+                  ? "Online"
+                  : "Offline"}
               </div>
             </div>
           </button>

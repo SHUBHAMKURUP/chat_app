@@ -18,6 +18,7 @@ const App = () => {
 
   useEffect(() => {
     checkAuth();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [checkAuth]);
   console.log({ authUser });
 
