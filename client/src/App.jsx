@@ -17,6 +17,12 @@ const App = () => {
   console.log({ onlineUsers });
 
   useEffect(() => {
+    document.title = authUser?.username
+      ? `Chat App - ${authUser.username}`
+      : "Chat App";
+  }, [authUser]);
+
+  useEffect(() => {
     checkAuth();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [checkAuth]);

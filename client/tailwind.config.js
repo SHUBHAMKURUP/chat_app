@@ -15,7 +15,6 @@ export default {
       "bumblebee",
       "emerald",
       "corporate",
-      "synthwave",
       "retro",
       "cyberpunk",
       "valentine",
