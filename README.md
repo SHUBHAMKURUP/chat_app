@@ -2,6 +2,8 @@
 
 A real-time chat application built with **React**, **Vite**, **Express**, **MongoDB**, and **Socket.IO**.
 
+🔗 [Live Demo](https://chat-app-l3y5.onrender.com)
+
 ## Features
 
 - User authentication (signup, login, logout)
