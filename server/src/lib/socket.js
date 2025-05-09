@@ -10,12 +10,10 @@ const io = new Server(server, {
     origin: ["http://localhost:5173"],
   },
 });
-
+const userSocketMap = {};
 export function getReceiverSocketId(userId) {
   return userSocketMap[userId];
 }
-
-const userSocketMap = {};
 
 io.on("connection", (socket) => {
   console.log("New client connected", socket.id);
